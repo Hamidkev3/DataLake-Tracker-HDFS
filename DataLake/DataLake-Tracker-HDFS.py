@@ -78,7 +78,7 @@ def write_updated_df_to_hdfs(df, output_path):
 def update_cutoff_table(connection, ct_cutoff, max_id_data, tablename):
     """Updates Cutoff table with max id in the dataset."""
     with connection.cursor() as cursor:
-        cursor.execute("UPDATE bi_staging.log_cutoff SET CUTOFF_TIME = :ct_cutoff, CUTOFF_ID = :max_id_data WHERE TABLE_NAME = :tablename",
+        cursor.execute("UPDATE log_cutoff SET CUTOFF_TIME = :ct_cutoff, CUTOFF_ID = :max_id_data WHERE TABLE_NAME = :tablename",
                        (ct_cutoff, max_id_data, tablename))
         connection.commit()
 
@@ -86,7 +86,7 @@ def update_cutoff_table(connection, ct_cutoff, max_id_data, tablename):
 def update_lineage_table(connection, ct_load_comp, ct_cutoff, row_counts, max_lineage_key):
     """Updates Lineage table with dataset row counts."""
     with connection.cursor() as cursor:
-        cursor.execute("UPDATE bi_staging.log_lineage SET WAS_SUCCESSFUL = 1, DATA_LOAD_COMPLETED = :ct_load_comp, "
+        cursor.execute("UPDATE log_lineage SET WAS_SUCCESSFUL = 1, DATA_LOAD_COMPLETED = :ct_load_comp, "
                        "SOURCE_SYSTEM_CUTOFF_TIME = :ct_cutoff, ROW_NO = :row_counts WHERE LINEAGE_KEY = :max_lineage_key",
                        (ct_load_comp, ct_cutoff, row_counts, max_lineage_key)
                        )
@@ -105,7 +105,7 @@ def main():
         sid = "192.168.11.11:1521/oracle_db_url"
 
         # Read the Cutoff and Lineage tables using PySpark
-        lineage_table = "log_lineage_table"
+        lineage_table = "log_lineage"
         df_lineage = read_table_from_database(
             spark, url, user, password, driver, lineage_table)
 
