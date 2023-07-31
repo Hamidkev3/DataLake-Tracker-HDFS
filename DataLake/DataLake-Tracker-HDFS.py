@@ -171,7 +171,7 @@ def main():
         # Dataset updated until the start of today (midnight)
         ct_cutoff = datetime.datetime.today().replace(
             hour=0, minute=0, second=0, microsecond=0)
-        # Conection to Oracle database
+        # Conection to Oracle database and retry
         cs = f"{user}/{password}@{sid}"
         db_connection_status = False
         db_connection_timeout = 0    
