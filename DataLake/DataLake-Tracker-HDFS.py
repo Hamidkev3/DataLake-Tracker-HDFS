@@ -173,13 +173,23 @@ def main():
             hour=0, minute=0, second=0, microsecond=0)
         # Conection to Oracle database
         cs = f"{user}/{password}@{sid}"
-        connection = oracledb.connect(cs)
+        db_connection_status = False
+        db_connection_timeout = 0    
+        while db_connection_status == False and db_connection_timeout < 4:
+            try:
+                connection = oracledb.connect(cs)
+                db_connection_status = True
+            except Exception as e:
+                db_connection_timeout += 1
+                message = {"Oracle database": str(e) + ' for ' + str(db_connection_timeout) + ' times'}
+                print(message)
 
         # Update log_cutoff and log_lineage tables with update queries in the database(oracle)
         update_cutoff_table(connection, ct_cutoff, max_id_data, tablename)
         update_lineage_table(connection, ct_load_comp,
                              ct_cutoff, row_counts, max_lineage_key)
 
+        connection.close()
         spark.stop()
 
     except Exception as e:
