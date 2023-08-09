@@ -171,6 +171,7 @@ def main():
         # Dataset updated until the start of today (midnight)
         ct_cutoff = datetime.datetime.today().replace(
             hour=0, minute=0, second=0, microsecond=0)
+        spark.stop()
         # Conection to Oracle database and retry
         cs = f"{user}/{password}@{sid}"
         db_connection_status = False
@@ -190,7 +191,7 @@ def main():
                              ct_cutoff, row_counts, max_lineage_key)
 
         connection.close()
-        spark.stop()
+        
 
     except Exception as e:
         print(f"An error occurred: {e}")
